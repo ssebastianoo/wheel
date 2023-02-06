@@ -11,6 +11,7 @@
     let addedListener: boolean = false;
 
     function spin() {
+        $wheelWinner = null;
         if (!addedListener) {
             wheel.addEventListener("transitionend", () => {
                 if (result) {
@@ -37,6 +38,7 @@
     }
 
     function reset() {
+        $wheelWinner = null;
         result = null;
         wheel.style.transform = "";
     }
@@ -52,13 +54,7 @@
 <main style={"--options:" + options.length}>
     <Confetti />
     <div class="container">
-        <textarea
-            placeholder="Write options separated by a ','"
-            value="a,b,c,d,e,f"
-            on:keyup={addOptions}
-        />
-        <button on:click|preventDefault={spin}>spin</button>
-        <button on:click|preventDefault={reset}>reset</button>
+        <h1 class="title">Wheel</h1>
         <div class="wheel-parent">
             <div class="arrow" />
             <div class="wheel" bind:this={wheel}>
@@ -93,6 +89,15 @@
                 </div>
             </div>
         </div>
+        <textarea
+            placeholder="Write options separated by a ','"
+            value="a,b,c,d,e,f"
+            on:keyup={addOptions}
+        />
+        <div class="buttons">
+            <button on:click|preventDefault={spin}>Spin</button>
+            <button on:click|preventDefault={reset}>Reset</button>
+        </div>
     </div>
 </main>
 
@@ -101,26 +106,46 @@
     $size: 300px;
 
     .container {
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        margin: 40px 0;
+        min-height: calc(100vh - 80px);
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
         gap: 50px;
 
-        button {
-            all: unset;
-            background-color: rgb(252, 109, 109);
-            padding: 5px;
-            font-size: 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: box-shadow 0.1s;
+        .title {
+            margin: 0;
+        }
 
-            &:hover {
-                box-shadow: 2px 2px white;
+        .buttons {
+            display: flex;
+            gap: 10px;
+
+            button {
+                all: unset;
+                background-color: $mainColor;
+                color: black;
+                padding: 5px;
+                font-size: 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: box-shadow 0.1s;
+
+                &:hover {
+                    box-shadow: 2px 2px white;
+                }
             }
+        }
+
+        textarea {
+            all: unset;
+            background-color: rgb(51, 49, 49);
+            resize: both;
+            border: 2px solid white;
+            padding: 10px;
+            border-radius: 10px;
         }
     }
 
@@ -130,6 +155,7 @@
         display: flex;
         justify-content: center;
         position: relative;
+        overflow: hidden;
 
         .arrow {
             width: 0;

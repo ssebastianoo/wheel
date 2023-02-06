@@ -67,8 +67,17 @@
 </script>
 
 {#if $wheelWinner}
-    <div class="result">
-        <h1>{$wheelWinner}</h1>
+    <div class="result-parent">
+        <div class="result">
+            <div class="close">
+                <button
+                    on:click|preventDefault={() => {
+                        $wheelWinner = null;
+                    }}>❌</button
+                >
+            </div>
+            <h1>🎉{$wheelWinner}🎉</h1>
+        </div>
     </div>
 {/if}
 
@@ -76,9 +85,9 @@
     <canvas />
 </div>
 
-<style>
+<style lang="scss">
     .confetti {
-        z-index: 9999;
+        z-index: 9998;
         position: absolute;
         top: 0;
         left: 0;
@@ -86,5 +95,50 @@
         height: 100vh;
         pointer-events: none;
         overflow: hidden;
+    }
+
+    @keyframes appear {
+        100% {
+            scale: 1;
+        }
+    }
+
+    .result-parent {
+        position: absolute;
+        width: 100vw;
+        min-height: calc(100vh - 40px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        pointer-events: none;
+
+        .result {
+            border: 4px solid white;
+            pointer-events: all;
+            background-color: rgb(37, 36, 36);
+            padding: 20px;
+            border-radius: 10px;
+            scale: 0;
+            animation: 1s appear cubic-bezier(0.23, 1, 0.32, 1) forwards;
+
+            h1 {
+                margin: 0;
+            }
+
+            .close {
+                right: 5px;
+                top: 5px;
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+                position: absolute;
+
+                button {
+                    all: unset;
+                    cursor: pointer;
+                }
+            }
+        }
     }
 </style>
