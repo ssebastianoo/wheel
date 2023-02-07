@@ -1,212 +1,57 @@
 <script lang="ts">
     import Confetti from "./lib/Confetti.svelte";
-    import { wheelWinner } from "./lib/store";
-
-    let options = ["a", "b", "c", "d", "e", "f"];
-    let wheel;
-
-    $: squareSize = (300 * Math.PI) / options.length - 20;
-
-    let result: string | null;
-    let addedListener: boolean = false;
-
-    function spin() {
-        $wheelWinner = null;
-        if (!addedListener) {
-            wheel.addEventListener("transitionend", () => {
-                if (result) {
-                    // alert(result);
-                    $wheelWinner = result;
-                }
-            });
-            addedListener = true;
-        }
-
-        let start = 0;
-        if (wheel.style.transform) {
-            start = parseInt(wheel.style.transform.match(/\d+/)[0]);
-        }
-
-        wheel.style.transform = `rotate(${
-            start + 3600 + Math.round(Math.random() * 360)
-        }deg)`;
-
-        const transform = wheel.style.transform.match(/\d+/g)[0];
-        const currentPos = transform - 360 * Math.floor(transform / 360);
-        result =
-            options[Math.floor((360 - currentPos) / (360 / options.length))];
-    }
-
-    function reset() {
-        $wheelWinner = null;
-        result = null;
-        wheel.style.transform = "";
-    }
-
-    function addOptions(e: Event) {
-        const target = e.target as HTMLTextAreaElement;
-        if (target.value.split(",").length > 1) {
-            options = target.value.split(",");
-        }
-    }
+    import Wheel from "./lib/Wheel.svelte";
 </script>
 
-<main style={"--options:" + options.length}>
+<main>
     <Confetti />
-    <div class="container">
+    <header>
         <h1 class="title">Wheel</h1>
-        <div class="wheel-parent">
-            <div class="arrow" />
-            <div class="wheel" bind:this={wheel}>
-                <div class="lines">
-                    {#each options as _, index}
-                        <div
-                            class="line"
-                            style={`transform: rotate(${
-                                (360 / options.length) * index
-                            }deg)`}
-                        />
-                    {/each}
-                </div>
-                <div class="words">
-                    {#each options as option, index}
-                        <div
-                            class="word"
-                            style={`transform: rotate(${
-                                (360 / options.length) * index +
-                                360 / options.length / 2
-                            }deg);width:${squareSize}px`}
-                        >
-                            <p
-                                style={"font-size:" +
-                                    900 / options.length +
-                                    "%"}
-                            >
-                                {option}
-                            </p>
-                        </div>
-                    {/each}
-                </div>
-            </div>
-        </div>
-        <textarea
-            placeholder="Write options separated by a ','"
-            value="a,b,c,d,e,f"
-            on:keyup={addOptions}
-        />
-        <div class="buttons">
-            <button on:click|preventDefault={spin}>Spin</button>
-            <button on:click|preventDefault={reset}>Reset</button>
-        </div>
+        <a
+            href="https://github.com/ssebastianoo/wheel"
+            target="_blank"
+            rel="noreferrer"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 496 512"
+                fill="white"
+                width="25px"
+                ><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path
+                    d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"
+                /></svg
+            ></a
+        >
+    </header>
+    <div class="container">
+        <Wheel />
     </div>
 </main>
 
 <style lang="scss">
     $mainColor: rgb(235, 235, 110);
-    $size: 300px;
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        height: 60px;
+        color: white;
+        border-bottom: 2px solid $mainColor;
+
+        h1 {
+            margin: 0;
+        }
+    }
 
     .container {
         width: 100%;
-        margin: 40px 0;
-        min-height: calc(100vh - 80px);
+        margin: 20px 0;
+        min-height: calc(100vh - 102px);
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        gap: 50px;
-
-        .title {
-            margin: 0;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 10px;
-
-            button {
-                all: unset;
-                background-color: $mainColor;
-                color: black;
-                padding: 5px;
-                font-size: 20px;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: box-shadow 0.1s;
-
-                &:hover {
-                    box-shadow: 2px 2px white;
-                }
-            }
-        }
-
-        textarea {
-            all: unset;
-            background-color: rgb(51, 49, 49);
-            resize: both;
-            border: 2px solid white;
-            padding: 10px;
-            border-radius: 10px;
-        }
-    }
-
-    .wheel-parent {
-        width: $size;
-        height: $size;
-        display: flex;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-
-        .arrow {
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 20px solid white;
-            z-index: 2;
-            position: absolute;
-            top: -8px;
-        }
-
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background-color: $mainColor;
-            display: flex;
-            justify-content: center;
-            position: relative;
-            transition: transform 2s cubic-bezier(0.19, 1, 0.22, 1);
-            color: black;
-
-            .line {
-                position: absolute;
-                width: 1px;
-                height: 50%;
-                background-color: black;
-                transform-origin: bottom;
-            }
-
-            .words {
-                width: 100%;
-                height: 100%;
-                position: absolute;
-                display: flex;
-                justify-content: center;
-
-                .word {
-                    position: absolute;
-                    height: 50%;
-                    transform-origin: bottom;
-                    text-align: center;
-
-                    p {
-                        margin-top: 30px;
-                        margin-bottom: 0;
-                        word-break: break-all;
-                    }
-                }
-            }
-        }
+        gap: 40px;
     }
 </style>
